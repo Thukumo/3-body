@@ -20,6 +20,7 @@ colors = []
 delta_t = 2.0*10**(6)
 interval_update = 1
 size_marker = 5
+draw_line = True
 range_xy = 1.0 * 10**2 #表示範囲(±これになる)
 """
 planets.append(planet(0, 0, 5.972*10**3, vector(0, 0), "red"))
@@ -61,7 +62,7 @@ def update(_):
         v[i] = vector(v[i].x + fmm*m[j]*x2/(x2+y2)*hogex, v[i].y + fmm*m[j]*y2/(x2+y2)*hogey)
         v[j] = vector(v[j].x - fmm*m[i]*x2/(x2+y2)*hogex, v[j].y - fmm*m[i]*y2/(x2+y2)*hogey)
     sec += delta_t
-    #plt.cla()
+    if not draw_line: plt.cla()
     plt.scatter(x, y, c=colors, s=size_marker)
     plt.title(f"{n_planets}体問題のシミュ (t={sec}s, dt={delta_t}s)", fontname="MS Gothic")
     plt.xlabel('X (m)')
