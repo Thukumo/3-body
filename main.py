@@ -30,24 +30,29 @@ planets.append(planet(-6.0e1, -4.0e1, 5.972e3, vector(0, 0), "red"))
 planets.append(planet(6.0e1, 4.0e1, 7.0e2, vector(0, 0), "blue"))
 planets.append(planet(6.0e1, -4.0e1, 7.0e2, vector(0, 0), "green"))
 """
-#"""
+
 delta_t = 1.0e2
 range_xy = 1.5
-size_marker = 25
+size_marker = 15
 draw_line = True
 planets.append(planet(0, 0, 100, vector(0, 0), "red"))
 planets.append(planet(0, 1, 1.0e-2, vector(-sqrt(scipy.constants.G*100), 0), "blue"))
+planets.append(planet(1, 0, 1.0e-2, vector(0, -sqrt(scipy.constants.G*100)), "green"))
 """
 range_xy = 2e10
 delta_t = 8.64e4*4
+draw_line = False
 situryo = 5.9724e25
 planets.append(planet(-0.1e11, -0.01e11, situryo, vector(0, 1.0e2), "red"))
 planets.append(planet(0.1e11, 0.01e11, situryo, vector(0, -1.0e2), "blue"))
 """
-for _ in range(4):
-    #planets.append(planet(np.random.randint(-range_xy, range_xy), np.random.randint(-range_xy, range_xy), np.random.randint(1, 10)e(np.random.randint(2, 4)), vector(0, 0), "red"))
-    pass
-#"""
+"""
+delta_t = 2.0e3
+range_xy = 1.0e2
+size_marker = 5
+draw_line = False
+for _ in range(100): planets.append(planet(np.random.randint(-range_xy, range_xy), np.random.randint(-range_xy, range_xy), np.random.randint(1, 10) * 10 ** np.random.randint(2, 4), vector(0, 0), "red"))
+"""
 
 
 
