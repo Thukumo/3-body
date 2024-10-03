@@ -35,6 +35,7 @@ for _ in range(10):
     #planets.append(planet(np.random.randint(-range_xy, range_xy), np.random.randint(-range_xy, range_xy), np.random.randint(1, 10)*10**(-1), vector(np.random.choice([-1, 1])*np.random.rand(), np.random.choice([-1, 1])*np.random.rand()), "red"))
     planets.append(planet(np.random.randint(-range_xy, range_xy), np.random.randint(-range_xy, range_xy), np.random.randint(1, 10)*10**(np.random.randint(2, 4)), vector(0, 0), "red"))
 """
+
 #入力データの展開
 num = -1
 delta_t /= 10**3
