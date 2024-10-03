@@ -17,7 +17,7 @@ colors = []
 
 # シミュレーション設定
 #delta_t = 1.0*10**7
-delta_t = 2.0*10**(6)
+delta_t = 5.0*10**(6)
 interval_update = 1
 size_marker = 5
 draw_line = True
@@ -36,7 +36,7 @@ for _ in range(10):
     planets.append(planet(np.random.randint(-range_xy, range_xy), np.random.randint(-range_xy, range_xy), np.random.randint(1, 10)*10**(np.random.randint(2, 4)), vector(0, 0), "red"))
 """
 #入力データの展開
-sec = 0
+num = -1
 delta_t /= 10**3
 n_planets = len(planets)
 for n in range(n_planets):
@@ -48,11 +48,12 @@ for n in range(n_planets):
     x[n], y[n] = x[n] - v[n].x*delta_t, y[n] - v[n].y*delta_t
 
 def update(_):
-    global sec
+    global num
     #print(v)
+    num+=1
     for n in range(n_planets): x[n], y[n] = x[n] + v[n].x*delta_t, y[n] + v[n].y*delta_t
     for i, j in itertools.combinations(range(n_planets), 2):
-        fmm = (scipy.constants.G)*delta_t/((x[i]-x[j])**2 + (y[i]-y[j])**2)
+        fmm = scipy.constants.G*delta_t/((x[i]-x[j])**2 + (y[i]-y[j])**2)
         x2 = (x[i] - x[j])**2
         y2 = (y[i] - y[j])**2
         if x2+y2 == 0:
@@ -61,10 +62,10 @@ def update(_):
         hogey = 1 if y[i] < y[j] else -1
         v[i] = vector(v[i].x + fmm*m[j]*x2/(x2+y2)*hogex, v[i].y + fmm*m[j]*y2/(x2+y2)*hogey)
         v[j] = vector(v[j].x - fmm*m[i]*x2/(x2+y2)*hogex, v[j].y - fmm*m[i]*y2/(x2+y2)*hogey)
-    sec += delta_t
     if not draw_line: plt.cla()
+    ax.set_aspect("equal")
     plt.scatter(x, y, c=colors, s=size_marker)
-    plt.title(f"{n_planets}体問題のシミュ (t={sec}s, dt={delta_t}s)", fontname="MS Gothic")
+    plt.title(f"{n_planets}体問題のシミュ (t={delta_t*num}s, dt={delta_t}s)", fontname="MS Gothic")
     plt.xlabel('X (m)')
     plt.ylabel('Y (m)')
     plt.grid(True)
@@ -72,6 +73,7 @@ def update(_):
     plt.ylim(-range_xy, range_xy)
 
 fig = plt.figure()
+ax = plt.axes()
 ani = animation.FuncAnimation(fig, update, interval=interval_update, frames=1000)
 #ani.save("test.gif", writer = 'imagemagick')
 # グラフを表示
