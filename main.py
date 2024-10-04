@@ -31,13 +31,13 @@ planets.append(planet(6.0e1, 4.0e1, 7.0e2, vector(0, 0), "blue"))
 planets.append(planet(6.0e1, -4.0e1, 7.0e2, vector(0, 0), "green"))
 """
 
-delta_t = 1.0e2
+delta_t = 5.0e2
 range_xy = 1.5
 size_marker = 15
-draw_line = True
+draw_line = False
 planets.append(planet(0, 0, 100, vector(0, 0), "red"))
 planets.append(planet(0, 1, 1.0e-2, vector(-sqrt(scipy.constants.G*100), 0), "blue"))
-planets.append(planet(1, 0, 1.0e-2, vector(0, -sqrt(scipy.constants.G*100)), "green"))
+#planets.append(planet(1, 0, 1.0e-2, vector(0, -sqrt(scipy.constants.G*100)), "green"))
 """
 range_xy = 2e10
 delta_t = 8.64e4*4
@@ -61,7 +61,6 @@ for _ in range(100): planets.append(planet(np.random.randint(-range_xy, range_xy
 
 #入力データの展開
 num = -1
-#delta_t /= 10**3
 n_planets = len(planets)
 for p in planets:
     x.append(p.x)
