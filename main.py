@@ -77,16 +77,13 @@ def update(_):
     num+=1
     for n in range(n_planets): x[n], y[n] = x[n] + v[n].x*delta_t, y[n] + v[n].y*delta_t
     for i, j in itertools.combinations(range(n_planets), 2):
-        x2 = (x[i] - x[j])**2
-        y2 = (y[i] - y[j])**2
-        if (x2py2 := x2 + y2) == 0: continue
-        ucos = sqrt(x2/x2py2)
-        usin = sqrt(y2/x2py2)
+        xdiff = x[i] - x[j]
+        ydiff = y[i] - y[j]
+        if (x2py2 := xdiff**2 + ydiff**2) == 0: continue
+        x2py2sqrt = sqrt(x2py2)
+        cos, sin = xdiff/x2py2sqrt, ydiff/x2py2sqrt
         fmm = scipy.constants.G*delta_t/x2py2
-        hogex = 1 if x[i] < x[j] else -1 # == 0のときはx2が0となるので考えなくてよい
-        hogey = 1 if y[i] < y[j] else -1
-        v[i] = vector(v[i].x + fmm*m[j]*ucos*hogex, v[i].y + fmm*m[j]*usin*hogey)
-        v[j] = vector(v[j].x - fmm*m[i]*ucos*hogex, v[j].y - fmm*m[i]*usin*hogey)
+        v[i], v[j] = vector(v[i].x - fmm*m[j]*cos, v[i].y - fmm*m[j]*sin), vector(v[j].x + fmm*m[i]*cos, v[j].y + fmm*m[i]*sin)
     if not draw_line: plt.cla()
     ax.set_aspect("equal")
     plt.scatter(x, y, c=colors, s=size_marker)
