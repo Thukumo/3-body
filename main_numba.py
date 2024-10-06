@@ -8,7 +8,6 @@ from math import sqrt
 from tqdm import tqdm
 
 #いろいろの初期化とか
-vector = namedtuple("vector", ["x", "y"])
 planet = namedtuple("planet", ["x", "y", "m", "v", "color"]) #(m), (m), vector(x, y), color
 planets, x, y, m, v, colors = [], [], [], [], [], []
 
@@ -28,9 +27,9 @@ plot = 0
 mul = int(1.0e5)
 frame = 15000
 fps = 60
-planets.append(planet(-6.0e1, -4.0e1, 5.972e3, vector(0, 0), "red"))
-planets.append(planet(6.0e1, 4.0e1, 7.0e2, vector(0, 0), "blue"))
-planets.append(planet(6.0e1, -4.0e1, 7.0e2, vector(0, 0), "green"))
+planets.append(planet(-6.0e1, -4.0e1, 5.972e3, (0, 0), "red"))
+planets.append(planet(6.0e1, 4.0e1, 7.0e2, (0, 0), "blue"))
+planets.append(planet(6.0e1, -4.0e1, 7.0e2, (0, 0), "green"))
 
 """
 delta_t = 5.0e2
@@ -71,23 +70,36 @@ for p in planets:
     m.append(p.m)
     v.append(p.v)
     colors.append(p.color)
-    x[-1], y[-1] = x[-1] - v[-1].x*delta_t, y[-1] - v[-1].y*delta_t
+    x[-1], y[-1] = x[-1] - v[-1][0]*delta_t, y[-1] - v[-1][1]*delta_t
 del planets
 oldpoint = None
 if "mul" not in globals(): mul = 1
 
-def update(_):
-    global num, oldpoint
-    for _ in range(mul):
-        num+=1
-        for n in range(n_planets): x[n], y[n] = x[n] + v[n].x*delta_t, y[n] + v[n].y*delta_t
-        for i, j in itertools.combinations(range(n_planets), 2):
-            xdiff, ydiff = x[i] - x[j], y[i] - y[j]
-            if (x2py2 := xdiff**2 + ydiff**2) == 0: continue
+import numba
+@numba.njit(cache=True)
+def calc(xl, yl, ml, vl):
+    for i in range(n_planets):
+        for j in range(i+1, n_planets):
+            xi, yi, mi = xl[i], yl[i], ml[i]
+            xj, yj, mj = xl[j], yl[j], ml[j]
+            xdiff, ydiff = xi - xj, yi - yj
+            x2py2 = xdiff**2 + ydiff**2
+            if x2py2 == 0: continue
             x2py2sqrt = sqrt(x2py2)
             cos, sin = xdiff/x2py2sqrt, ydiff/x2py2sqrt
             fmm = scipy.constants.G*delta_t/x2py2
-            v[i], v[j] = vector(v[i].x - fmm*m[j]*cos, v[i].y - fmm*m[j]*sin), vector(v[j].x + fmm*m[i]*cos, v[j].y + fmm*m[i]*sin)
+            vl[i] = (vl[i][0] + fmm*mj*cos, vl[i][1] + fmm*mj*sin)
+            vl[j] = (vl[j][0] - fmm*mi*cos, vl[j][1] - fmm*mi*sin)
+    return vl
+
+lis4iter = [i for i in range(n_planets)]
+def update(_):
+    global num, oldpoint, x, y, v
+    for _ in range(mul):
+        num+=1
+        for n in range(n_planets): x[n], y[n] = x[n] + v[n][0]*delta_t, y[n] + v[n][1]*delta_t
+        #for i, j in itertools.combinations(range(n_planets), 2): v[i], v[j] = calc(x[i], x[j], y[i], y[j], m[i], m[j])
+        v = calc(x, y, m, v)
     if (not draw_line) and num != mul-1 : oldpoint.remove()
     ax.set_aspect("equal")
     oldpoint = plt.scatter(x, y, c=colors, s=size_marker)
